@@ -15,7 +15,7 @@ class SplashPage extends StatelessWidget {
     splashPageCubit.isUserLoggedIn();
 
     // Initialize Network Cubit
-    BlocProvider.of<NetworkConnectionCubit>(context);
+    // BlocProvider.of<NetworkConnectionCubit>(context);
 
     return BlocListener<SplashPageCubit, SplashPageState>(
       listener: (context, state) {

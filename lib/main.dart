@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 
 import 'core/constants/constants.dart';
+import 'cubits/add_expense_page_cubit/add_expense_page_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,13 +45,16 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => MainPageCubit(),
-        )
+        ),
+        BlocProvider(
+          create: (context) => AddExpensePageCubit(),
+        ),
       ],
       child: MaterialApp.router(
         title: 'Expense Tracker',
         debugShowCheckedModeBanner: false,
         theme: LightTheme.lightTheme,
-        routerConfig: Routes().router,
+        routerConfig: locator<Routes>().router,
       ),
     );
   }
