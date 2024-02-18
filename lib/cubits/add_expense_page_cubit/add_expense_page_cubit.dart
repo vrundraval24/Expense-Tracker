@@ -1,46 +1,53 @@
-import 'package:expense_tracker/data/category_data.dart';
+import 'package:appwrite/appwrite.dart';
+import 'package:expense_tracker/core/constants/constants.dart';
+import 'package:expense_tracker/core/enums/enums.dart';
+import 'package:expense_tracker/services/appwrite_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 part 'add_expense_page_state.dart';
 
 class AddExpensePageCubit extends Cubit<AddExpensePageState> {
   AddExpensePageCubit() : super(AddExpensePageInitial()) {
-
     // Initialization
     dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
   }
 
   bool isItemSelected = false;
   DateTime selectedDate = DateTime.now();
-  Set<String> selectedType = {'expense'};
+  TransactionType selectedType = TransactionType.EXPENSE;
 
   final GlobalKey<FormState> addExpenseFormKey = GlobalKey<FormState>();
 
   final amountController = TextEditingController();
   final titleController = TextEditingController();
   final dateController = TextEditingController();
+  final categoryController = TextEditingController();
 
-  // void changeSegment(Set<String> type) {
-  //   emit(AddExpensePageInitial(selectedType: type));
-  // }
+  final databases = AppwriteService.getDatabases();
 
-  // final List<DropdownMenuEntry<CategoryModel>> dropdownMenuEntryList = [];
+  // add transaction to database
+  Future<void> addTransactionToDatabase() async {
+    if (addExpenseFormKey.currentState!.validate()) {
 
-  // void createDropDownMenu() {
-  //
-  //   print("create drop down menu called");
-  //
-  //   for (var category in CategoryData.listOfCategories) {
-  //     dropdownMenuEntryList.add(
-  //       DropdownMenuEntry(
-  //         label: category.name,
-  //         value: category,
-  //         leadingIcon: category.icon,
-  //       ),
-  //     );
-  //   }
-  // }
+      print(categoryController.text);
+
+      final result = await databases.createDocument(
+        databaseId: Constants.DATABASES_ID,
+        collectionId: Constants.TRANSACTION_COLLECTION_ID,
+        documentId: ID.unique(),
+        data: {
+          "Type": selectedType.name.toLowerCase(),
+          "Title": titleController.text,
+          "Category": categoryController.text.toLowerCase(),
+          "Date": dateController.text,
+          "Amount": int.parse(amountController.text),
+        },
+      );
+
+      print(result);
+    }
+
+  }
 }

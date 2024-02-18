@@ -33,7 +33,7 @@ class CategoryList {
               ),
             ],
           ),
-          value: category,
+          value: category.name,
         ),
       );
     }

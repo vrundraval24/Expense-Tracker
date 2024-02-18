@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/enums/enums.dart';
+
 class AddExpensePage extends StatelessWidget {
   const AddExpensePage({super.key});
 
@@ -23,9 +25,8 @@ class AddExpensePage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
-                onPressed: () {
-                  addExpensePageCubit.addExpenseFormKey.currentState
-                      ?.validate();
+                onPressed: () async {
+                  addExpensePageCubit.addTransactionToDatabase();
                 },
                 icon: const Icon(Icons.check),
               ),
@@ -53,19 +54,20 @@ class AddExpensePage extends StatelessWidget {
                       ),
                       segments: const [
                         ButtonSegment(
-                          value: 'expense',
+                          value: TransactionType.EXPENSE,
                           label: Text('Expense'),
                           // icon: Icon(Icons.upload_rounded),
                         ),
                         ButtonSegment(
-                          value: 'income',
+                          value: TransactionType.INCOME,
                           label: Text('Income'),
                           // icon: Icon(Icons.download_rounded),
                         ),
                       ],
-                      selected: addExpensePageCubit.selectedType,
-                      onSelectionChanged: (setOfStrings) {
-                        addExpensePageCubit.selectedType = setOfStrings;
+                      selected: {addExpensePageCubit.selectedType},
+                      onSelectionChanged: (setOfObjects) {
+                        // first element of set because there is only one element
+                        addExpensePageCubit.selectedType = setOfObjects.first;
                         setState(() {});
                       },
                     );
@@ -120,8 +122,8 @@ class AddExpensePage extends StatelessWidget {
                       StatefulBuilder(
                         builder: (context, setState) {
                           return DropdownButtonFormField(
-                            validator: <CategoryModel>(CategoryModel value) {
-                              if (value == null) {
+                            validator: (value) {
+                              if ((value == null) || (value.toString().trim() == '')) {
                                 return 'Required field.';
                               }
                               return null;
@@ -143,6 +145,10 @@ class AddExpensePage extends StatelessWidget {
                             ),
                             items: CategoryList.dropdownMenuEntryList,
                             onChanged: (value) {
+                              print('value: $value');
+                              addExpensePageCubit.categoryController.text =
+                                  value.toString();
+
                               addExpensePageCubit.isItemSelected = true;
                               setState(() {});
                             },
