@@ -7,28 +7,27 @@ import 'package:intl/intl.dart';
 part 'add_expense_page_state.dart';
 
 class AddExpensePageCubit extends Cubit<AddExpensePageState> {
-  AddExpensePageCubit()
-      : super(
-          AddExpensePageInitial(
-            selectedType: {'expense'},
-          ),
-        ) {
+  AddExpensePageCubit() : super(AddExpensePageInitial()) {
+
+    // Initialization
     dateController.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    createDropDownMenu();
   }
 
-  final titleController = TextEditingController();
-  final dateController = TextEditingController();
+  bool isItemSelected = false;
+  DateTime selectedDate = DateTime.now();
+  Set<String> selectedType = {'expense'};
 
   final GlobalKey<FormState> addExpenseFormKey = GlobalKey<FormState>();
 
-  DateTime selectedDate = DateTime.now();
+  final amountController = TextEditingController();
+  final titleController = TextEditingController();
+  final dateController = TextEditingController();
 
-  Icon categoryIcon = Icon(FontAwesomeIcons.list);
+  // void changeSegment(Set<String> type) {
+  //   emit(AddExpensePageInitial(selectedType: type));
+  // }
 
-  void changeSegment(Set<String> type) {
-    emit(AddExpensePageInitial(selectedType: type));
-  }
+  // final List<DropdownMenuEntry<CategoryModel>> dropdownMenuEntryList = [];
 
   // void createDropDownMenu() {
   //
@@ -44,43 +43,4 @@ class AddExpensePageCubit extends Cubit<AddExpensePageState> {
   //     );
   //   }
   // }
-
-  // final List<DropdownMenuEntry<CategoryModel>> dropdownMenuEntryList = [];
-
-  final List<DropdownMenuItem<Object>> dropdownMenuEntryList = [];
-
-  bool isItemSelected = false;
-
-  void createDropDownMenu() {
-    print("create drop down menu called");
-
-    for (var category in CategoryData.listOfCategories) {
-      dropdownMenuEntryList.add(
-        DropdownMenuItem(
-          child: Row(
-            children: [
-              SizedBox(
-                width: 15,
-              ),
-              Icon(
-                category.icon.icon,
-                size: 18,
-                // color: category.color,
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(
-                category.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-          value: category,
-        ),
-      );
-    }
-  }
 }

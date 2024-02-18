@@ -46,9 +46,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => MainPageCubit(),
         ),
-        BlocProvider(
-          create: (context) => AddExpensePageCubit(),
-        ),
       ],
       child: MaterialApp.router(
         title: 'Expense Tracker',

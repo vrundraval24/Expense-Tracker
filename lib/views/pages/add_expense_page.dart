@@ -1,10 +1,9 @@
 import 'package:expense_tracker/cubits/add_expense_page_cubit/add_expense_page_cubit.dart';
-import 'package:expense_tracker/data/category_data.dart';
-import 'package:expense_tracker/models/category_model.dart';
+import 'package:expense_tracker/utils/category_list.dart';
 import 'package:expense_tracker/utils/validations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class AddExpensePage extends StatelessWidget {
@@ -14,67 +13,62 @@ class AddExpensePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final addExpensePageCubit = BlocProvider.of<AddExpensePageCubit>(context);
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) {
-        addExpensePageCubit.isItemSelected = false;
-        Navigator.pop(context);
-        // addExpensePageCubit.categoryIcon = Icon(FontAwesomeIcons.list);
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
       },
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            actions: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: IconButton(
-                  onPressed: () {
-                    addExpensePageCubit.addExpenseFormKey.currentState
-                        ?.validate();
-                  },
-                  icon: const Icon(Icons.check),
-                ),
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: IconButton(
+                onPressed: () {
+                  addExpensePageCubit.addExpenseFormKey.currentState
+                      ?.validate();
+                },
+                icon: const Icon(Icons.check),
               ),
-            ],
-          ),
-          body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+            ),
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
                   width: double.maxFinite,
                 ),
-                BlocBuilder<AddExpensePageCubit, AddExpensePageState>(
-                  builder: (context, state) {
-                    if (state is AddExpensePageInitial) {
-                      return SegmentedButton(
-                        showSelectedIcon: false,
-                        style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                                EdgeInsets.symmetric(horizontal: 40))),
-                        segments: const [
-                          ButtonSegment(
-                            value: 'expense',
-                            label: Text('Expense'),
-                            // icon: Icon(Icons.upload_rounded),
-                          ),
-                          ButtonSegment(
-                            value: 'income',
-                            label: Text('Income'),
-                            // icon: Icon(Icons.download_rounded),
-                          ),
-                        ],
-                        selected: state.selectedType,
-                        onSelectionChanged: (setOfStrings) {
-                          addExpensePageCubit.changeSegment(setOfStrings);
-                        },
-                      );
-                    }
-                    return const SizedBox();
+                StatefulBuilder(
+                  builder: (context, setState) {
+                    return SegmentedButton(
+                      showSelectedIcon: false,
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(
+                          EdgeInsets.symmetric(horizontal: 40),
+                        ),
+                      ),
+                      segments: const [
+                        ButtonSegment(
+                          value: 'expense',
+                          label: Text('Expense'),
+                          // icon: Icon(Icons.upload_rounded),
+                        ),
+                        ButtonSegment(
+                          value: 'income',
+                          label: Text('Income'),
+                          // icon: Icon(Icons.download_rounded),
+                        ),
+                      ],
+                      selected: addExpensePageCubit.selectedType,
+                      onSelectionChanged: (setOfStrings) {
+                        addExpensePageCubit.selectedType = setOfStrings;
+                        setState(() {});
+                      },
+                    );
                   },
                 ),
                 Form(
@@ -82,7 +76,28 @@ class AddExpensePage extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(
-                        height: 100,
+                        height: 50,
+                      ),
+                      TextFormField(
+                        controller: addExpensePageCubit.amountController,
+                        maxLength: 5,
+                        decoration: InputDecoration(
+                            counterText: '',
+                            hintText: 'Enter amount',
+                            prefixIcon: Icon(Icons.currency_rupee_rounded)),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value != null) {
+                            return Validations.notNullValidation(value.trim());
+                          }
+                          return null;
+                        },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s|-|,|\.'))
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
                       ),
                       TextFormField(
                         controller: addExpensePageCubit.titleController,
@@ -102,36 +117,15 @@ class AddExpensePage extends StatelessWidget {
                       const SizedBox(
                         height: 20,
                       ),
-                      // StatefulBuilder(
-                      //   builder: (context, setState) {
-                      //     return DropdownMenu(
-                      //       dropdownMenuEntries:
-                      //           addExpensePageCubit.dropdownMenuEntryList,
-                      //       hintText: 'Select category',
-                      //       // errorText: 'Required field',
-                      //       expandedInsets: EdgeInsets.zero,
-                      //       leadingIcon: Icon(
-                      //         addExpensePageCubit.categoryIcon.icon,
-                      //         size: 18,
-                      //       ),
-                      //       // enableFilter: true,
-                      //       // requestFocusOnTap: true,
-                      //
-                      //       onSelected: (value) {
-                      //         addExpensePageCubit.categoryIcon = value!.icon;
-                      //         setState(
-                      //           () {},
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                      // ),
-                      // const SizedBox(
-                      //   height: 20,
-                      // ),
                       StatefulBuilder(
                         builder: (context, setState) {
                           return DropdownButtonFormField(
+                            validator: <CategoryModel>(CategoryModel value) {
+                              if (value == null) {
+                                return 'Required field.';
+                              }
+                              return null;
+                            },
                             focusColor: Colors.transparent,
                             decoration: InputDecoration(
                               focusedBorder: UnderlineInputBorder(
@@ -147,7 +141,7 @@ class AddExpensePage extends StatelessWidget {
                                   ? null
                                   : Icon(Icons.format_list_bulleted_rounded),
                             ),
-                            items: addExpensePageCubit.dropdownMenuEntryList,
+                            items: CategoryList.dropdownMenuEntryList,
                             onChanged: (value) {
                               addExpensePageCubit.isItemSelected = true;
                               setState(() {});
@@ -159,6 +153,12 @@ class AddExpensePage extends StatelessWidget {
                         height: 20,
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value != null) {
+                            return Validations.notNullValidation(value.trim());
+                          }
+                          return null;
+                        },
                         canRequestFocus: false,
                         controller: addExpensePageCubit.dateController,
                         readOnly: true,
@@ -187,6 +187,9 @@ class AddExpensePage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
                 ),
               ],
             ),
