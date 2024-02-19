@@ -33,4 +33,12 @@ class CategoryData {
 
 
   ];
+
+  static Map<String, dynamic> categoryKeyValuePairs = {
+    "food": {"icon" : Icon(FontAwesomeIcons.burger), "color": Colors.amber},
+    "clothes": {"icon" : Icon(FontAwesomeIcons.shirt), "color": Colors.blue},
+    "healthcare": {"icon" : Icon(FontAwesomeIcons.notesMedical), "color": Colors.green},
+    "entertainment": {"icon" : Icon(FontAwesomeIcons.film), "color": Colors.redAccent},
+    "travel": {"icon" : Icon(FontAwesomeIcons.car), "color": Colors.brown},
+  };
 }

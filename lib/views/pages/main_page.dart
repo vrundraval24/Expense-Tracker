@@ -15,11 +15,12 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final mainPageCubit = BlocProvider.of<MainPageCubit>(context);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
       body: BlocBuilder<MainPageCubit, int>(
         builder: (context, index) {
           return pagesList[index];
@@ -56,10 +57,4 @@ class MainPage extends StatelessWidget {
   }
 }
 
-final pagesList = [
-  const HomePage(),
-  const ChartPage()
-];
-
-
-
+final pagesList = [const HomePage(), const ChartPage()];

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/enums/enums.dart';
+import '../../cubits/home_page_cubit/home_page_cubit.dart';
 
 class AddExpensePage extends StatelessWidget {
   const AddExpensePage({super.key});
@@ -14,6 +15,8 @@ class AddExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final addExpensePageCubit = BlocProvider.of<AddExpensePageCubit>(context);
+    final homePageCubit = BlocProvider.of<HomePageCubit>(context);
+
 
     return GestureDetector(
       onTap: () {
@@ -26,7 +29,15 @@ class AddExpensePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
                 onPressed: () async {
-                  addExpensePageCubit.addTransactionToDatabase();
+                  if (addExpensePageCubit.addExpenseFormKey.currentState!
+                      .validate()) {
+
+                    Navigator.pop(context);
+
+                    await addExpensePageCubit.addTransactionToDatabase();
+                    homePageCubit.fetchTransactionData();
+
+                  }
                 },
                 icon: const Icon(Icons.check),
               ),
@@ -123,7 +134,8 @@ class AddExpensePage extends StatelessWidget {
                         builder: (context, setState) {
                           return DropdownButtonFormField(
                             validator: (value) {
-                              if ((value == null) || (value.toString().trim() == '')) {
+                              if ((value == null) ||
+                                  (value.toString().trim() == '')) {
                                 return 'Required field.';
                               }
                               return null;
@@ -186,7 +198,7 @@ class AddExpensePage extends StatelessWidget {
 
                           if (newDate != null) {
                             addExpensePageCubit.dateController.text =
-                                DateFormat('dd/MM/yyyy').format(newDate);
+                                DateFormat('dd/MM/yy').format(newDate);
                             addExpensePageCubit.selectedDate = newDate;
                           }
                         },

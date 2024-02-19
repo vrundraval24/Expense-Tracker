@@ -1,3 +1,4 @@
+import 'package:expense_tracker/cubits/home_page_cubit/home_page_cubit.dart';
 import 'package:expense_tracker/cubits/login_page_cubit/login_page_cubit.dart';
 import 'package:expense_tracker/cubits/main_page_cubit/main_page_cubit.dart';
 import 'package:expense_tracker/cubits/network_connection_cubit/network_connection_cubit.dart';
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => MainPageCubit(),
+        ),
+      BlocProvider(
+          create: (context) => HomePageCubit(),
         ),
       ],
       child: MaterialApp.router(
