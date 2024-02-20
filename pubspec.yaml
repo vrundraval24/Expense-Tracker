@@ -46,6 +46,7 @@ dependencies:
   hive_flutter: ^1.1.0
   intl: ^0.19.0
   flutter_native_splash: ^2.3.10
+  dart_appwrite: ^10.1.1
 
 dev_dependencies:
   flutter_test:

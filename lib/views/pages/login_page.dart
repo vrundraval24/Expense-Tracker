@@ -1,4 +1,3 @@
-import 'package:expense_tracker/cubits/authentication_cubit/authentication_cubit.dart';
 import 'package:expense_tracker/cubits/login_page_cubit/login_page_cubit.dart';
 import 'package:expense_tracker/views/pages/home_page.dart';
 import 'package:flutter/material.dart';

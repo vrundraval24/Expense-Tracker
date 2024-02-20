@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:appwrite/appwrite.dart';
 import 'package:expense_tracker/core/constants/constants.dart';
 import 'package:expense_tracker/services/appwrite_service.dart';
@@ -11,28 +13,38 @@ class HomePageCubit extends Cubit<HomePageState> {
   HomePageCubit() : super(HomePageInitial()) {
     print('HomePageCubit is created.');
 
-    fetchTransactionData();
+    emit(HomePageLoadingState());
   }
 
   final databases = AppwriteService.getDatabases();
 
   Future<void> fetchTransactionData() async {
 
-    // emit(HomePageLoadingState());
 
-    List<TransactionModel> list = [];
+    try{
 
-    final result = await databases.listDocuments(
-      databaseId: Constants.DATABASES_ID,
-      collectionId: Constants.TRANSACTION_COLLECTION_ID,
-    );
+      // Initialize Appwrite User
+      final user = await AppwriteService.getUser();
 
-    result.documents.forEach((document) {
-      list.insert(0, TransactionModel.fromJson(document));
-    });
+      List<TransactionModel> list = [];
 
-    print(list[0].category);
+      final result = await databases.listDocuments(
+        databaseId: Constants.DATABASES_ID,
+        collectionId: user.$id,
+      );
 
-    emit(HomePageDataFetchSuccessState(listOfTransactionModels: list));
+      result.documents.forEach((document) {
+        list.insert(0, TransactionModel.fromJson(document));
+      });
+
+      emit(HomePageDataFetchSuccessState(listOfTransactionModels: list));
+
+
+    }catch (e){
+      log(e.toString());
+      emit(HomePageDataFetchFailureState());
+    }
+
+
   }
 }

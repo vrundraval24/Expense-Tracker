@@ -1,9 +1,10 @@
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart';
+import 'package:dart_appwrite/dart_appwrite.dart';
+import 'package:dart_appwrite/models.dart';
+import 'package:expense_tracker/core/secrets/appwrite_secrets.dart';
 
 import '../core/constants/constants.dart';
 
-class AppwriteService {
+class AppwriteSdkService {
   static Client? _client;
   static Databases? _database;
   static Storage? _storage;
@@ -16,7 +17,7 @@ class AppwriteService {
     _client ??= Client()
         .setEndpoint(Constants.APPWRITE_ENDPOINT)
         .setProject(Constants.APPWRITE_PROJECT_ID)
-        .setSelfSigned(status: true);
+        .setKey(Secrets.APPWRITE_API_KEY);
     return _client!;
   }
 

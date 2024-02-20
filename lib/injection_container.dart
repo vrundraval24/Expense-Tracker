@@ -8,7 +8,7 @@ import 'package:get_it/get_it.dart';
 
 final locator = GetIt.instance;
 
-void setupLocator() {
+Future<void> setupLocator() async {
 
   // create a category list
   CategoryList.createDropDownMenu();

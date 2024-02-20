@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:appwrite/models.dart';
 import 'package:expense_tracker/core/constants/constants.dart';
 import 'package:expense_tracker/core/enums/enums.dart';
 import 'package:expense_tracker/models/transaction_model.dart';
@@ -30,9 +31,13 @@ class AddExpensePageCubit extends Cubit<AddExpensePageState> {
 
   final databases = AppwriteService.getDatabases();
 
-
   // add transaction to database
   Future<void> addTransactionToDatabase() async {
+
+    // Initialize Appwrite User
+    final User user = await AppwriteService.getUser();
+
+
     final Map<String, dynamic> map = TransactionModel.toMap(
       TransactionModel(
         type: selectedType.name.toLowerCase(),
@@ -43,9 +48,16 @@ class AddExpensePageCubit extends Cubit<AddExpensePageState> {
       ),
     );
 
+    // final result = await databases.createDocument(
+    //   databaseId: Constants.DATABASES_ID,
+    //   collectionId: Constants.TRANSACTION_COLLECTION_ID,
+    //   documentId: ID.unique(),
+    //   data: map,
+    // );
+
     final result = await databases.createDocument(
       databaseId: Constants.DATABASES_ID,
-      collectionId: Constants.TRANSACTION_COLLECTION_ID,
+      collectionId: user.$id,
       documentId: ID.unique(),
       data: map,
     );
